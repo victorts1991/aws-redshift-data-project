@@ -1,4 +1,4 @@
-class RedshiftDdlDmlQueries: 
+class RedshiftDdlDmlQueries:
     
     def __init__(self, redshift_client, bucket_name, aws_iam_role):
         self.redshift_client = redshift_client

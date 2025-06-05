@@ -1,7 +1,8 @@
 import os
 from dotenv import load_dotenv
-from redshift_client import RedshiftClient
-from redshift_ddl_dml_queries import RedshiftDdlDmlQueries
+from redshift.redshift_client import RedshiftClient
+from redshift.redshift_ddl_dml_queries import RedshiftDdlDmlQueries
+from redshift.redshift_analysis_queries import RedshiftAnalysisQueries
 
 load_dotenv()
 
@@ -14,6 +15,8 @@ class DataPipeline:
         self.redshift_dbname = os.getenv('REDSHIFT_DBNAME')
         self.redshift_user = os.getenv('REDSHIFT_USER') 
         self.redshift_password = os.getenv('REDSHIFT_PASSWORD')
+        self.bucket_name = os.getenv('BUCKET_NAME')
+        self.aws_iam_role = os.getenv('AWS_IAM_ROLE')
 
         self.redshift_client = RedshiftClient(
             host=self.redshift_host, 
@@ -28,8 +31,8 @@ class DataPipeline:
         
         ddlDmlQueries = RedshiftDdlDmlQueries(
             self.redshift_client, 
-            'bucket-fiap-redshift-victor', 
-            'arn:aws:iam::101001870197:role/Redshift-Role'
+            self.bucket_name, 
+            self.aws_iam_role
         )
 
         ddlDmlQueries.create_vendedores_table_copy_csv()
@@ -39,6 +42,21 @@ class DataPipeline:
 
         print("Finish AWS Redshift Data Pipeline...")
 
+    def run_analysis_queries(self):
+        print("Starting AWS Redshift Analysis Queries...")
+
+        analysisQueries = RedshiftAnalysisQueries(
+            self.redshift_client, 
+            self.bucket_name, 
+            self.aws_iam_role
+        )
+        
+        analysisQueries.analyze_conditions_and_quantities_of_products_offered_under_each_condition()
+        analysisQueries.analyze_conditions_and_average_price_of_products_in_each_condition()
+
+        print("\nFinish AWS Redshift Analysis Queries...")
+
 if __name__ == "__main__":
     pipeline = DataPipeline()
-    pipeline.run_pipeline()
+    # pipeline.run_pipeline()
+    pipeline.run_analysis_queries()
