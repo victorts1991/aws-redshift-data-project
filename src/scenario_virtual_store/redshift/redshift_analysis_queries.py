@@ -7,10 +7,8 @@ class RedshiftAnalysisQueries:
     START_BOLD = '\033[1m'
     END_RESET = '\033[0m'
 
-    def __init__(self, redshift_client, bucket_name, aws_iam_role):
+    def __init__(self, redshift_client):
         self.redshift_client = redshift_client
-        self.bucket_name = bucket_name
-        self.aws_iam_role = aws_iam_role
 
     def analyze_conditions_and_quantities_of_products_offered_under_each_condition(self):
         cursor = self.redshift_client.execute_query(
