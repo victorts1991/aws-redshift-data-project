@@ -20,11 +20,10 @@ python3 ./src/data_pipeline.py
 
 TO DO:
 
-1. Executar queries analíticas;
-2. Acrescentar a subida dos arquivos no S3;
-3. Criar Terraform para interagir com o Redshift e S3;
-4. Criar Github Actions;
-5. Criar documentação;
+1. Acrescentar a subida dos arquivos no S3;
+2. Criar Terraform para interagir com o Redshift e S3;
+3. Criar Github Actions;
+4. Criar documentação;
 
 export REDSHIFT_HOST=redshift-cluster-2.cv4cutjvp7fa.us-east-2.redshift.amazonaws.com 
 export REDSHIFT_PORT=5439

@@ -53,6 +53,11 @@ class DataPipeline:
         
         analysisQueries.analyze_conditions_and_quantities_of_products_offered_under_each_condition()
         analysisQueries.analyze_conditions_and_average_price_of_products_in_each_condition()
+        analysisQueries.analyze_conditions_and_quantities_of_products_sold_in_each_condition()
+        analysisQueries.analyze_best_selling_top_10_products_in_quantity_and_value()
+        analysisQueries.analyze_who_are_the_best_sellers()
+        analysisQueries.analyze_what_is_the_sales_volume_over_the_months_of_2020()
+        analysisQueries.analyze_what_are_the_sales_figures_by_state()
 
         print("\nFinish AWS Redshift Analysis Queries...")
 

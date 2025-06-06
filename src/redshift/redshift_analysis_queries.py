@@ -1,5 +1,6 @@
 import json
 import pandas as pd
+import decimal
 
 class RedshiftAnalysisQueries:
 
@@ -41,19 +42,92 @@ class RedshiftAnalysisQueries:
         print(f"\n{self.START_BOLD}Quais são as condições e o preço médio dos produtos em cada condição?{self.END_RESET}")
         self.list_result(cursor)
 
-    
-    
-    #-- Quais são as condições e as quantidades de produtos vendidos em cada condição?
+    def analyze_conditions_and_quantities_of_products_sold_in_each_condition(self):
+        cursor = self.redshift_client.execute_query(
+            f"""
+            SELECT
+                p.Condicao,
+                SUM(ip.quantidade) AS quantidade_total_vendida
+            FROM itens_pedido ip
+            INNER JOIN produtos p ON ip.produto_id = p.produto_id
+            GROUP BY p.Condicao
+            ORDER BY SUM(ip.quantidade) DESC;
+            """,
+            commit=False
+        )
+        print(f"\n{self.START_BOLD}Quais são as condições e as quantidades de produtos vendidos em cada condição?{self.END_RESET}")
+        self.list_result(cursor)
 
-    #-- Quais são os produtos mais vendidos, em quantidade e em valor? 
+    def analyze_best_selling_top_10_products_in_quantity_and_value(self):
+        cursor = self.redshift_client.execute_query(
+            f"""
+            SELECT 
+                pro.produto,
+                SUM(ip.quantidade) AS quantidade_total,
+                SUM(ip.valor_total) AS valor_total
+            FROM itens_pedido ip
+            INNER join produtos pro ON ip.produto_id = pro.produto_id
+            GROUP BY pro.produto
+            ORDER BY SUM(ip.valor_total) DESC
+            LIMIT 10;
+            """,
+            commit=False
+        )
+        print(f"\n{self.START_BOLD}Quais são os 10 produtos mais vendidos, em quantidade e em valor?{self.END_RESET}")
+        self.list_result(cursor)
 
-    #-- Nas vendas da nossa loja online existe alguma condição de produtos que mais se destaca?
+    def analyze_who_are_the_best_sellers(self):
+        cursor = self.redshift_client.execute_query(
+            f"""
+            SELECT 
+                ven.nome_vendedor,
+                SUM(ped.total) AS valor_total
+            FROM vendedores ven
+            INNER JOIN pedidos ped ON ped.vendedor_id = ven.vendedor_id
+            GROUP BY ven.nome_vendedor
+            ORDER BY  SUM(ped.total) DESC;
+            """,
+            commit=False
+        )
+        print(f"\n{self.START_BOLD}Quem são os melhores vendedores?{self.END_RESET}")
+        self.list_result(cursor)
 
-    #-- Quem são os melhores vendedores?
+    def analyze_what_is_the_sales_volume_over_the_months_of_2020(self):
+        cursor = self.redshift_client.execute_query(
+            f"""
+            SELECT 
+                EXTRACT(YEAR FROM data_compra) AS ano, 
+                EXTRACT(MONTH FROM data_compra) AS mes, 
+                SUM(total) AS valor_total_vendas
+            FROM pedidos
+            WHERE 
+                ano = '2020'
+            GROUP BY 
+                ano,
+                mes
+            ORDER BY 
+                ano DESC, 
+                mes DESC;
+            """,
+            commit=False
+        )
+        print(f"\n{self.START_BOLD}Qual é a o volume das vendas ao longo dos meses de 2020?{self.END_RESET}")
+        self.list_result(cursor)
 
-    #-- Qual é a o volume das vendas ao longo dos meses?
-
-    #-- Quais são os valores de vendas por Estado?
+    def analyze_what_are_the_sales_figures_by_state(self):
+        cursor = self.redshift_client.execute_query(
+            f"""
+            SELECT 
+                estado,
+                SUM(valor_total) AS valor_total
+            FROM itens_pedido
+            GROUP BY estado
+            ORDER BY valor_total DESC;
+            """,
+            commit=False
+        )
+        print(f"\n{self.START_BOLD}Quais são os valores de vendas por Estado?{self.END_RESET}")
+        self.list_result(cursor)
 
     def list_result(self, cursor):
         try:
@@ -64,6 +138,18 @@ class RedshiftAnalysisQueries:
             if results:
 
                 df = pd.DataFrame(results, columns=column_names)
+
+                for col in df.columns:
+                    # Se a coluna é do tipo 'object' no Pandas, pode conter strings ou outros tipos mistos.
+                    # Vamos verificar se ela *realmente contém* objetos Decimal antes de converter para float.
+                    if df[col].dtype == 'object':
+                        # Verifica se a coluna não está vazia e se há algum Decimal nela
+                        if not df[col].isnull().all() and any(isinstance(val, decimal.Decimal) for val in df[col].dropna()):
+                            df[col] = df[col].astype(float)
+                    # Para todas as colunas que são ou se tornaram numéricas, garanta que sejam float para JSON
+                    elif pd.api.types.is_numeric_dtype(df[col]):
+                        df[col] = df[col].astype(float)
+
                 records = df.to_dict(orient='records')
                 for i, record in enumerate(records):
                     # Imprime cada dicionário como um objeto JSON separado
