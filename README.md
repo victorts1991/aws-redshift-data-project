@@ -134,3 +134,4 @@ python3 ./src/main_pipeline.py
 AWS_REGION=<região onde seu ambiente foi montado, por exemplo: us-east-2>
 ```
 5. Qualquer commit feito na branch main fará com que o pipeline do Github Actions seja executado;
+
