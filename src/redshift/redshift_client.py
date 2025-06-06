@@ -26,7 +26,7 @@ class RedshiftClient:
         if not self.user or not self.password:
             raise ValueError("User and password must be provided for traditional authentication.")
 
-        print(f"RedshiftClient inicializado para '{self.user}@{self.host}:{self.port}/{self.dbname}' usando Username/Password.")
+        print(f"RedshiftClient inicializado para '{self.user}@{self.host}:{self.port}/{self.dbname}'.")
 
     def connect(self):
         """
