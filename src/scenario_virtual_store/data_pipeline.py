@@ -1,16 +1,53 @@
+import os
 from scenario_virtual_store.redshift.redshift_ddl_dml_queries import RedshiftDdlDmlQueries
 from scenario_virtual_store.redshift.redshift_analysis_queries import RedshiftAnalysisQueries
 
 class VirtualStoreDataPipeline:
 
-    def __init__(self, redshift_client, bucket_name, aws_iam_role):
+    def __init__(self, redshift_client, s3_upload, bucket_name, aws_iam_role, aws_access_key_id, aws_secret_access_key):
 
         self.redshift_client = redshift_client
         self.bucket_name = bucket_name
         self.aws_iam_role = aws_iam_role
+        self.s3_upload = s3_upload
+        self.aws_access_key_id = aws_access_key_id
+        self.aws_secret_access_key = aws_secret_access_key
 
     def run_pipeline(self):
         print("Starting AWS Redshift Virtual Store Data Pipeline...")
+
+        file_path = os.path.abspath(os.path.join('data/vendedores.csv', '.'))
+        self.s3_upload.handle_s3(
+            file_path,
+            self.aws_access_key_id,
+            self.aws_secret_access_key,
+            'upload',
+            'vendedores.csv'
+        )
+        file_path = os.path.abspath(os.path.join('data/produtos.csv', '.'))
+        self.s3_upload.handle_s3(
+            file_path,
+            self.aws_access_key_id,
+            self.aws_secret_access_key,
+            'upload',
+            'produtos.csv'
+        )
+        file_path = os.path.abspath(os.path.join('data/pedidos.csv', '.'))
+        self.s3_upload.handle_s3(
+            file_path,
+            self.aws_access_key_id,
+            self.aws_secret_access_key,
+            'upload',
+            'pedidos.csv'
+        )
+        file_path = os.path.abspath(os.path.join('data/itens_pedidos.csv', '.'))
+        self.s3_upload.handle_s3(
+            file_path,
+            self.aws_access_key_id,
+            self.aws_secret_access_key,
+            'upload',
+            'itens_pedidos.csv'
+        )
         
         ddlDmlQueries = RedshiftDdlDmlQueries(
             self.redshift_client, 

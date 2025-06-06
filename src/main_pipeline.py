@@ -3,6 +3,7 @@ import os
 from dotenv import load_dotenv
 
 from redshift.redshift_client import RedshiftClient
+from s3.s3_upload import S3Upload
 from scenario_virtual_store.data_pipeline import VirtualStoreDataPipeline
 from scenario_flights.data_pipeline import FlightsDataPipeline
 
@@ -20,6 +21,8 @@ if __name__ == "__main__":
     redshift_password = os.getenv('REDSHIFT_PASSWORD')
     bucket_name = os.getenv('BUCKET_NAME')
     aws_iam_role = os.getenv('AWS_IAM_ROLE')
+    aws_access_key_id = os.getenv('AWS_ACCESS_KEY_ID')
+    aws_secret_access_key = os.getenv('AWS_SECRET_ACCESS_KEY')
 
     redshift_client = RedshiftClient(
         host=redshift_host, 
@@ -29,7 +32,9 @@ if __name__ == "__main__":
         password=redshift_password
     )
 
-    virtual_store_data_pipeline = VirtualStoreDataPipeline(redshift_client, bucket_name, aws_iam_role)
+    s3_upload = S3Upload(bucket_name)
+
+    virtual_store_data_pipeline = VirtualStoreDataPipeline(redshift_client, s3_upload, bucket_name, aws_iam_role, aws_access_key_id, aws_secret_access_key)
     flights_data_pipeline = FlightsDataPipeline(redshift_client, aws_iam_role)
 
     # Run Virtual Store Pipeline
