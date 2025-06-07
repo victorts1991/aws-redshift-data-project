@@ -1,5 +1,9 @@
 # aws-redshift-data-project
 
+Um **pipeline de dados ELT (Extract, Load, Transform) completo na AWS**, que orquestra a ingestão de **milhões de registros** de dados brutos do **Amazon S3** para o **Amazon Redshift** via **Python**, onde poderosas análises e transformações **SQL** são executadas. Os resultados são exibidos de forma clara com **Pandas**, e a automação do fluxo é garantida por **GitHub Actions**.
+
+---
+
 # 🚀 Projeto de Análise de Dados com AWS Redshift e ELT
 
 Este projeto demonstra um pipeline robusto de análise de dados, utilizando as capacidades de um Data Warehouse na nuvem, o **Amazon Redshift**, e o poderoso conceito de **ELT (Extract, Load, Transform)**. O objetivo é ingerir dados de diferentes fontes, armazená-los de forma otimizada e, em seguida, realizar análises complexas para extrair insights valiosos.
