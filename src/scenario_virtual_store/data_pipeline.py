@@ -16,7 +16,7 @@ class VirtualStoreDataPipeline:
     def run_pipeline(self):
         print("Starting AWS Redshift Virtual Store Data Pipeline...")
 
-        file_path = os.path.abspath(os.path.join('data/vendedores.csv', '.'))
+        file_path = os.path.abspath(os.path.join('data/vendedores.csv'))
         self.s3_upload.handle_s3(
             file_path,
             self.aws_access_key_id,
@@ -24,7 +24,7 @@ class VirtualStoreDataPipeline:
             'upload',
             'vendedores.csv'
         )
-        file_path = os.path.abspath(os.path.join('data/produtos.csv', '.'))
+        file_path = os.path.abspath(os.path.join('data/produtos.csv'))
         self.s3_upload.handle_s3(
             file_path,
             self.aws_access_key_id,
@@ -32,7 +32,7 @@ class VirtualStoreDataPipeline:
             'upload',
             'produtos.csv'
         )
-        file_path = os.path.abspath(os.path.join('data/pedidos.csv', '.'))
+        file_path = os.path.abspath(os.path.join('data/pedidos.csv'))
         self.s3_upload.handle_s3(
             file_path,
             self.aws_access_key_id,
@@ -40,7 +40,7 @@ class VirtualStoreDataPipeline:
             'upload',
             'pedidos.csv'
         )
-        file_path = os.path.abspath(os.path.join('data/itens_pedidos.csv', '.'))
+        file_path = os.path.abspath(os.path.join('data/itens_pedidos.csv'))
         self.s3_upload.handle_s3(
             file_path,
             self.aws_access_key_id,
